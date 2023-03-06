@@ -17,7 +17,8 @@ class Dinosaur(Sprite):
         self.dino_running = True
         self.dino_ducking = False
         self.dino_jumping = False
-        self.jump_vel = self.JUMP_VEL      
+        self.jump_vel = self.JUMP_VEL
+        self.is_dead = False
 
     def update(self, user_input):
         if self.dino_running:
