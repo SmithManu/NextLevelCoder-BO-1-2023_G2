@@ -69,4 +69,7 @@ BG = pygame.image.load(os.path.join(IMG_DIR, 'Other/Track.png'))
 
 HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
 
+GAMEOVER = pygame.image.load(os.path.join(IMG_DIR, 'Other/GameOver.png')) #Cargamos imagen gameover
+RESET = pygame.image.load(os.path.join(IMG_DIR, 'Other/Reset.png')) #Cargamos imagen reset
+
 DEFAULT_TYPE = "default"

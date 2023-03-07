@@ -1,5 +1,5 @@
 import pygame
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, GAMEOVER, RESET
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.Obstacles.obstacle_manager import ObstacleManager
 
@@ -72,13 +72,16 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     self.state = "menu"
+                    self.player = Dinosaur() #Creamos nuestro dinosaurio
+                    self.obstacles = ObstacleManager()
 
     def game_over_draw(self):
-        self.screen.fill((163, 228, 215))
-        font = pygame.font.Font(None, 30)
-        text = font.render("Game Over. Press ENTER to play again", True, (0, 0, 0))
-        text_rect = text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
-        self.screen.blit(text, text_rect)
+        posX = (SCREEN_WIDTH-GAMEOVER.get_width())/2
+        posY = (SCREEN_HEIGHT-GAMEOVER.get_height())/2
+        self.screen.blit(GAMEOVER, (posX, posY))
+        posx = (SCREEN_WIDTH-RESET.get_width())/2
+        posy = (SCREEN_HEIGHT+RESET.get_height())/2
+        self.screen.blit(RESET, (posx, posy))
         pygame.display.update()
 
 
