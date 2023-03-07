@@ -11,7 +11,7 @@ class Obstacle(Sprite):
 
     def update(self, game_speed):
         self.rect.x -= game_speed
-        if self.rect.x <= 0:
+        if self.rect.x <= -self.image.get_width():
             self.dead = True
 
     def draw(self, screen):

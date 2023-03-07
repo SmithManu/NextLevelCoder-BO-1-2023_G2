@@ -1,5 +1,5 @@
 import pygame
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, GAMEOVER, RESET
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, GAMEOVER, RESET, GAME
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.Obstacles.obstacle_manager import ObstacleManager
 
@@ -21,24 +21,17 @@ class Game:
     def run(self):
         # Game loop: events - update - draw
         while True:
+            self.events()
             if self.state == "menu":
-                self.menu_events()
                 self.menu_draw()
             elif self.state == "playing":
-                self.events()
                 self.update()
                 self.draw()
             elif self.state == "game_over":
-                self.game_over_events()
                 self.game_over_draw()
             else:
                 break
         pygame.quit()
-
-    def events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.state = "exit"
 
     def update(self):
         user_input = pygame.key.get_pressed()
@@ -47,8 +40,16 @@ class Game:
 
     def draw(self):
         self.clock.tick(FPS)
-        self.screen.fill((163, 228, 215))
+        self.screen.fill((255, 255, 255))
         self.draw_background()
+
+        # Dibujar los puntos del jugador
+        font = pygame.font.SysFont("comicsansms", 25)
+        puntos_texto = font.render(f"Score: {self.player.points}", True, (0, 0, 0))
+        puntos_rect = puntos_texto.get_rect()
+        puntos_rect.topright = (self.screen.get_width() - 50, 10)
+        self.screen.blit(puntos_texto, puntos_rect)
+
         self.player.draw(self.screen) #Dibujamos el dinosaurio
         self.obstacles.draw(self.screen)
         pygame.display.update()
@@ -57,6 +58,7 @@ class Game:
             self.state = "game_over"
 
     def draw_background(self):
+        self.screen.fill((255, 255, 255))
         image_width = BG.get_width()
         self.screen.blit(BG, (self.x_pos_bg, self.y_pos_bg))
         self.screen.blit(BG, (image_width + self.x_pos_bg, self.y_pos_bg))
@@ -64,16 +66,6 @@ class Game:
             self.screen.blit(BG, (image_width + self.x_pos_bg, self.y_pos_bg))
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
-
-    def game_over_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.state = "exit"
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    self.state = "menu"
-                    self.player = Dinosaur() #Creamos nuestro dinosaurio
-                    self.obstacles = ObstacleManager()
 
     def game_over_draw(self):
         posX = (SCREEN_WIDTH-GAMEOVER.get_width())/2
@@ -84,19 +76,31 @@ class Game:
         self.screen.blit(RESET, (posx, posy))
         pygame.display.update()
 
-
-    def menu_events(self):
+    def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.state = "exit"
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_RETURN  and self.state == "menu":
                     self.state = "playing"
+                elif event.key == pygame.K_RETURN and self.state == "game_over":
+                    self.state = "menu"
+                    self.player = Dinosaur() #Creamos nuestro dinosaurio
+                    self.obstacles = ObstacleManager()
 
     def menu_draw(self):
-        self.screen.fill((163, 228, 215))
-        font = pygame.font.Font(None, 30)
-        text = font.render("Press ENTER to play", True, (0, 0, 0))
-        text_rect = text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
-        self.screen.blit(text, text_rect)
+        # Obtener las dimensiones de la ventana
+        ventana_ancho, ventana_alto = self.screen.get_size()
+
+        # Redimensionar la imagen al tamaño de la ventana
+        GAME_redimensionado = pygame.transform.scale(GAME, (ventana_ancho, ventana_alto))
+
+        # Calcular la posición de la imagen redimensionada para que se centre en la ventana
+        posX = (ventana_ancho - GAME_redimensionado.get_width()) // 2
+        posY = (ventana_alto - GAME_redimensionado.get_height()) // 2
+
+        # Dibujar la imagen redimensionada en la ventana en la posición calculada
+        self.screen.blit(GAME_redimensionado, (posX, posY))
+
+        # Actualizar la pantalla
         pygame.display.update()
