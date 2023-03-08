@@ -20,9 +20,9 @@ class Dinosaur(Sprite):
         self.jump_vel = self.JUMP_VEL
         self.points = 0
         self.is_dead = False
+        self.name = ""
 
     def update(self, user_input):
-        self.points += 1
         if self.dino_running:
             self.run()
         elif self.dino_ducking:

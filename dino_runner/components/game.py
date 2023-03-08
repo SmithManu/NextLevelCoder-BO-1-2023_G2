@@ -1,9 +1,11 @@
 import pygame
+from dino_runner.components.text_utils import TextUtils
 from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, GAMEOVER, RESET, GAME
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.Obstacles.obstacle_manager import ObstacleManager
 
 class Game:
+
     def __init__(self):
         pygame.init()
         pygame.display.set_caption(TITLE) #Titulo
@@ -17,6 +19,8 @@ class Game:
         self.player = Dinosaur() #Creamos nuestro dinosaurio
         self.obstacles = ObstacleManager()
         self.state = "menu"
+        self.text_utils = TextUtils()
+        self.running = True
 
     def run(self):
         # Game loop: events - update - draw
@@ -42,16 +46,9 @@ class Game:
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255))
         self.draw_background()
-
-        # Dibujar los puntos del jugador
-        font = pygame.font.SysFont("comicsansms", 25)
-        puntos_texto = font.render(f"Score: {self.player.points}", True, (0, 0, 0))
-        puntos_rect = puntos_texto.get_rect()
-        puntos_rect.topright = (self.screen.get_width() - 50, 10)
-        self.screen.blit(puntos_texto, puntos_rect)
-
-        self.player.draw(self.screen) #Dibujamos el dinosaurio
+        self.score()
         self.obstacles.draw(self.screen)
+        self.player.draw(self.screen) #Dibujamos el dinosaurio
         pygame.display.update()
         pygame.display.flip()
         if self.player.is_dead:
@@ -89,18 +86,37 @@ class Game:
                     self.obstacles = ObstacleManager()
 
     def menu_draw(self):
-        # Obtener las dimensiones de la ventana
-        ventana_ancho, ventana_alto = self.screen.get_size()
-
         # Redimensionar la imagen al tamaño de la ventana
-        GAME_redimensionado = pygame.transform.scale(GAME, (ventana_ancho, ventana_alto))
-
-        # Calcular la posición de la imagen redimensionada para que se centre en la ventana
-        posX = (ventana_ancho - GAME_redimensionado.get_width()) // 2
-        posY = (ventana_alto - GAME_redimensionado.get_height()) // 2
-
+        GAME_redimensionado = pygame.transform.scale(GAME, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        posX = (SCREEN_WIDTH - GAME_redimensionado.get_width()) // 2
+        posY = (SCREEN_HEIGHT - GAME_redimensionado.get_height()) // 2
         # Dibujar la imagen redimensionada en la ventana en la posición calculada
-        self.screen.blit(GAME_redimensionado, (posX, posY))
+        #self.screen.blit(GAME_redimensionado, (posX, posY))
+        #text, text_rect = self.text_utils.get_centered_message("Ingrese su nombre:")
+        #self.screen.blit(text, text_rect)
+        #pygame.display.update() # Actualizar la pantalla
+        name = "" # Nombre inicial vacío
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.state = "exit"
+                    return
+                elif event.type == pygame.KEYDOWN:
+                    if event.unicode.isalpha() and len(name) < 10: # Solo letras y un máximo de 10 caracteres
+                        name += event.unicode
+                    elif event.key == pygame.K_BACKSPACE:
+                        name = name[:-1] # Borrar el último caracter
+                    elif event.key == pygame.K_RETURN:
+                        self.player.name = name # Guardar el nombre en el objeto player
+                        self.state = "playing" # Cambiar de estado a "playing"
+                        return
+            self.screen.blit(GAME_redimensionado, (posX, posY))
+            text, text_rect = self.text_utils.get_centered_message(f"Ingrese su nombre: {name}")
+            self.screen.blit(text, text_rect)
+            pygame.display.update() # Actualizar la pantalla
 
-        # Actualizar la pantalla
-        pygame.display.update()
+
+    def score(self):
+        self.player.points += 1
+        text, text_rect = self.text_utils.get_score(self.player.points)
+        self.screen.blit(text, text_rect)

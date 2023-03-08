@@ -74,3 +74,8 @@ GAMEOVER = pygame.image.load(os.path.join(IMG_DIR, 'Other/GameOver.png')) #Carga
 RESET = pygame.image.load(os.path.join(IMG_DIR, 'Other/Reset.png')) #Cargamos imagen reset
 
 DEFAULT_TYPE = "default"
+
+COLORS = {
+    "BLACK": (0,0,0),
+    "WHITE": (255,255,255)
+}
