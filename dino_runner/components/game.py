@@ -1,6 +1,6 @@
 import pygame
 from dino_runner.components.text_utils import TextUtils
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, GAMEOVER, RESET, GAME, MUSIC_GAME
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, GAMEOVER, RESET, GAME, MUSIC_GAME, COLORS
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.Obstacles.obstacle_manager import ObstacleManager
 
@@ -24,6 +24,7 @@ class Game:
         self.running = True
         self.dey="morning"
         self.day_num = 255
+        self.max_points = 0
 
     def run(self):
         # Game loop: events - update - draw
@@ -56,8 +57,6 @@ class Game:
     def draw(self):
         self.clock.tick(FPS)
         self.day()
-        print(self.day_num)
-        self.screen.fill((self.day_num, self.day_num, self.day_num))
         self.draw_background()
         self.score()
         self.obstacles.draw(self.screen)
@@ -65,6 +64,8 @@ class Game:
         pygame.display.update()
         pygame.display.flip()
         if self.player.is_dead:
+            if self.player.points>self.max_points:
+                self.max_points=self.player.points
             self.state = "game_over"
 
     def day(self):
@@ -77,7 +78,7 @@ class Game:
 
 
     def draw_background(self):
-        self.screen.fill((255, 255, 255))
+        self.screen.fill((self.day_num, self.day_num, self.day_num))
         image_width = BG.get_width()
         self.screen.blit(BG, (self.x_pos_bg, self.y_pos_bg))
         self.screen.blit(BG, (image_width + self.x_pos_bg, self.y_pos_bg))
@@ -130,10 +131,15 @@ class Game:
             self.screen.blit(GAME_redimensionado, (posX, posY))
             text, text_rect = self.text_utils.get_centered_message(f"NAME: {name}")
             self.screen.blit(text, text_rect)
+            text, text_rect = self.text_utils.get_centered_message(str(self.max_points),SCREEN_WIDTH/2, 100)
+            if (self.max_points>0):self.screen.blit(text, text_rect)
             pygame.display.update() # Actualizar la pantalla
 
 
     def score(self):
         self.player.points += 1
-        text, text_rect = self.text_utils.get_score(self.player.points)
+        text, text_rect = self.text_utils.get_score(self.player.points) if self.dey == "evening" else self.text_utils.get_score(self.player.points,COLORS["WHITE"])
+        self.screen.blit(text, text_rect)
+        names = "Dino "+self.player.name
+        text, text_rect = self.text_utils.get_centered_message(names,(SCREEN_WIDTH/2),40,COLORS["BLACK"],20) if self.dey == "evening" else self.text_utils.get_centered_message(names,(SCREEN_WIDTH/2),40,COLORS["WHITE"],20)
         self.screen.blit(text, text_rect)
