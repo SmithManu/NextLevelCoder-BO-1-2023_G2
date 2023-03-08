@@ -1,6 +1,6 @@
 import pygame
 from dino_runner.components.text_utils import TextUtils
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, GAMEOVER, RESET, GAME
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, GAMEOVER, RESET, GAME, MUSIC_GAME
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.Obstacles.obstacle_manager import ObstacleManager
 
@@ -8,6 +8,7 @@ class Game:
 
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()
         pygame.display.set_caption(TITLE) #Titulo
         pygame.display.set_icon(ICON) #Icono del juego
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -27,11 +28,17 @@ class Game:
         while True:
             self.events()
             if self.state == "menu":
+                MUSIC_GAME[2].stop()
+                MUSIC_GAME[0].play(-1)
                 self.menu_draw()
             elif self.state == "playing":
+                MUSIC_GAME[0].stop()
+                MUSIC_GAME[1].play(-1)
                 self.update()
                 self.draw()
             elif self.state == "game_over":
+                MUSIC_GAME[1].stop()
+                MUSIC_GAME[2].play()
                 self.game_over_draw()
             else:
                 break
@@ -90,11 +97,6 @@ class Game:
         GAME_redimensionado = pygame.transform.scale(GAME, (SCREEN_WIDTH, SCREEN_HEIGHT))
         posX = (SCREEN_WIDTH - GAME_redimensionado.get_width()) // 2
         posY = (SCREEN_HEIGHT - GAME_redimensionado.get_height()) // 2
-        # Dibujar la imagen redimensionada en la ventana en la posición calculada
-        #self.screen.blit(GAME_redimensionado, (posX, posY))
-        #text, text_rect = self.text_utils.get_centered_message("Ingrese su nombre:")
-        #self.screen.blit(text, text_rect)
-        #pygame.display.update() # Actualizar la pantalla
         name = "" # Nombre inicial vacío
         while True:
             for event in pygame.event.get():
@@ -111,7 +113,7 @@ class Game:
                         self.state = "playing" # Cambiar de estado a "playing"
                         return
             self.screen.blit(GAME_redimensionado, (posX, posY))
-            text, text_rect = self.text_utils.get_centered_message(f"Ingrese su nombre: {name}")
+            text, text_rect = self.text_utils.get_centered_message(f"NAME: {name}")
             self.screen.blit(text, text_rect)
             pygame.display.update() # Actualizar la pantalla
 

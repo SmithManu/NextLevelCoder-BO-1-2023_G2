@@ -2,6 +2,7 @@ import pygame
 import os
 
 # Global Constants
+pygame.mixer.init()
 TITLE = "Chrome Dino Runner"
 SCREEN_HEIGHT = 600
 SCREEN_WIDTH = 1100
@@ -79,3 +80,9 @@ COLORS = {
     "BLACK": (0,0,0),
     "WHITE": (255,255,255)
 }
+
+MUSIC_GAME = [
+    pygame.mixer.Sound(os.path.join(IMG_DIR, 'Music/Game.mp3')),
+    pygame.mixer.Sound(os.path.join(IMG_DIR, 'Music/Game1.mp3')),
+    pygame.mixer.Sound(os.path.join(IMG_DIR, 'Music/Game2.mp3'))
+]
