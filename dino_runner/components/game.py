@@ -22,6 +22,8 @@ class Game:
         self.state = "menu"
         self.text_utils = TextUtils()
         self.running = True
+        self.dey="morning"
+        self.day_num = 255
 
     def run(self):
         # Game loop: events - update - draw
@@ -34,11 +36,13 @@ class Game:
             elif self.state == "playing":
                 MUSIC_GAME[0].stop()
                 MUSIC_GAME[1].play(-1)
+                MUSIC_GAME[1].set_volume(0.1)
                 self.update()
                 self.draw()
             elif self.state == "game_over":
                 MUSIC_GAME[1].stop()
                 MUSIC_GAME[2].play()
+                MUSIC_GAME[2].set_volume(0.1)
                 self.game_over_draw()
             else:
                 break
@@ -51,7 +55,9 @@ class Game:
 
     def draw(self):
         self.clock.tick(FPS)
-        self.screen.fill((255, 255, 255))
+        self.day()
+        print(self.day_num)
+        self.screen.fill((self.day_num, self.day_num, self.day_num))
         self.draw_background()
         self.score()
         self.obstacles.draw(self.screen)
@@ -60,6 +66,15 @@ class Game:
         pygame.display.flip()
         if self.player.is_dead:
             self.state = "game_over"
+
+    def day(self):
+        if(self.player.points%1000 == 0):
+            self.dey = "morning" if self.dey=="evening" else "evening"
+        if(self.day_num>0 and self.dey == "morning"):
+            self.day_num -= 1
+        elif(self.day_num<255 and self.dey == "evening"):
+            self.day_num += 1
+
 
     def draw_background(self):
         self.screen.fill((255, 255, 255))
