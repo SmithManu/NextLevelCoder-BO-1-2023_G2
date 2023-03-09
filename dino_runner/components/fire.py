@@ -7,7 +7,7 @@ class Fire(Sprite):
     def __init__(self,player):
         self.image = pygame.transform.scale(FIRE, (40, 30))
         self.rect = self.image.get_rect()
-        self.rect.x = 100
+        self.rect.x = 120
         self.rect.y=player.dino_rect.y
         self.in_action=False
 

@@ -25,7 +25,6 @@ class Dinosaur(Sprite):
         self.name = ""
         self.power_up=[False, False, False]
         self.fires = []
-        self.step_index_Fire = 0
         self.power_up_time = [500,500,500]
 
         self.otro=self.image.get_width()
@@ -50,10 +49,10 @@ class Dinosaur(Sprite):
         elif not self.dino_state[2]:
             self.dino_state = [True, False, False]
         
-        if self.step_index >= 9 and user_input[pygame.K_SPACE] and self.power_up[1]:
+        if self.step_index >= 10 and user_input[pygame.K_SPACE] and self.power_up[1]:
             self.fires.append(Fire(self))
 
-        self.step_index = (self.step_index + 1) % 10
+        self.step_index = (self.step_index + 1) % 11
 
     def draw(self, screen):
         for number in range(self.life):
