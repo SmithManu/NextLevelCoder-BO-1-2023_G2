@@ -53,7 +53,16 @@ class Game:
         user_input = pygame.key.get_pressed()
         self.obstacles.update(self)
         self.player.update(user_input) #Acualizamos objeto dinosaurio
-
+        self.player.check_collision(self.obstacles.cactus)
+        self.player.check_collision(self.obstacles.birds)
+        self.player.check_collision(self.obstacles.powerUp)
+        self.player.check_colicion_fires(self.obstacles.cactus)
+        self.player.check_colicion_fires(self.obstacles.birds)
+        if self.player.is_dead:
+            if self.player.points>self.max_points:
+                self.max_points=self.player.points
+            self.state = "game_over"
+        
     def draw(self):
         self.clock.tick(FPS)
         self.day()
@@ -63,13 +72,9 @@ class Game:
         self.player.draw(self.screen) #Dibujamos el dinosaurio
         pygame.display.update()
         pygame.display.flip()
-        if self.player.is_dead:
-            if self.player.points>self.max_points:
-                self.max_points=self.player.points
-            self.state = "game_over"
 
     def day(self):
-        if(self.player.points%1000 == 0):
+        if(self.player.points%500 == 0):
             self.dey = "morning" if self.dey=="evening" else "evening"
         if(self.day_num>0 and self.dey == "morning"):
             self.day_num -= 1

@@ -50,11 +50,13 @@ SMALL_CACTUS = [
     pygame.image.load(os.path.join(IMG_DIR, "Cactus/SmallCactus1.png")),
     pygame.image.load(os.path.join(IMG_DIR, "Cactus/SmallCactus2.png")),
     pygame.image.load(os.path.join(IMG_DIR, "Cactus/SmallCactus3.png")),
+    pygame.image.load(os.path.join(IMG_DIR, "Cactus/SquashedCactus.png"))
 ]
 LARGE_CACTUS = [
     pygame.image.load(os.path.join(IMG_DIR, "Cactus/LargeCactus1.png")),
     pygame.image.load(os.path.join(IMG_DIR, "Cactus/LargeCactus2.png")),
     pygame.image.load(os.path.join(IMG_DIR, "Cactus/LargeCactus3.png")),
+    pygame.image.load(os.path.join(IMG_DIR, "Cactus/SquashedCactus.png"))
 ]
 
 BIRD = [
@@ -65,6 +67,7 @@ BIRD = [
 CLOUD = pygame.image.load(os.path.join(IMG_DIR, 'Other/Cloud.png'))
 SHIELD = pygame.image.load(os.path.join(IMG_DIR, 'Other/shield.png'))
 HAMMER = pygame.image.load(os.path.join(IMG_DIR, 'Other/hammer.png'))
+FIRE = pygame.image.load(os.path.join(IMG_DIR, 'Other/Fire.png'))
 
 BG = pygame.image.load(os.path.join(IMG_DIR, 'Other/Track.png'))
 
@@ -85,4 +88,11 @@ MUSIC_GAME = [
     pygame.mixer.Sound(os.path.join(IMG_DIR, 'Music/Game.mp3')),
     pygame.mixer.Sound(os.path.join(IMG_DIR, 'Music/Game1.mp3')),
     pygame.mixer.Sound(os.path.join(IMG_DIR, 'Music/Game2.mp3'))
+]
+
+POWER_UPS=[
+    pygame.image.load(os.path.join(IMG_DIR, 'Other/PowerUpUp.png')),
+    pygame.image.load(os.path.join(IMG_DIR, 'Other/PowerUpShield.png')),
+    pygame.image.load(os.path.join(IMG_DIR, 'Other/PowerUpFire.png')),    
+    pygame.image.load(os.path.join(IMG_DIR, 'Other/PowerUpBig.png'))
 ]
