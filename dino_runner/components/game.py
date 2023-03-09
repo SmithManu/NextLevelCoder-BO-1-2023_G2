@@ -27,6 +27,10 @@ class Game:
         self.max_points = 0
         self.max_name = ""
 
+        self.fade_alpha = 255
+        self.fade_increment = 5
+        self.fade_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+
     def run(self):
         # Game loop: events - update - draw
         while True:
@@ -34,7 +38,7 @@ class Game:
             if self.state == "menu":
                 MUSIC_GAME[2].stop()
                 MUSIC_GAME[0].play(-1)
-                self.menu_draw()
+                self.menu()
             elif self.state == "playing":
                 MUSIC_GAME[0].stop()
                 MUSIC_GAME[1].play(-1)
@@ -77,6 +81,7 @@ class Game:
         self.score()
         self.obstacles.draw(self.screen)
         self.player.draw(self.screen) #Dibujamos el dinosaurio
+
         pygame.display.update()
         pygame.display.flip()
 
@@ -106,6 +111,8 @@ class Game:
         posx = (SCREEN_WIDTH-RESET.get_width())/2
         posy = (SCREEN_HEIGHT+RESET.get_height())/2
         self.screen.blit(RESET, (posx, posy))
+        self.fade_surface.fill((0, 0, 0, self.fade_alpha))
+        self.screen.blit(self.fade_surface, (0, 0))
         pygame.display.update()
 
     def events(self):
@@ -114,18 +121,26 @@ class Game:
                 self.state = "exit"
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN  and self.state == "menu":
+                    self.fade_out()
                     self.state = "playing"
                 elif event.key == pygame.K_RETURN and self.state == "game_over":
+                    self.fade_out()
                     self.state = "menu"
                     self.player = Dinosaur() #Creamos nuestro dinosaurio
                     self.obstacles = ObstacleManager()
 
-    def menu_draw(self):
-        # Redimensionar la imagen al tamaño de la ventana
-        GAME_redimensionado = pygame.transform.scale(GAME, (SCREEN_WIDTH, SCREEN_HEIGHT))
-        posX = (SCREEN_WIDTH - GAME_redimensionado.get_width()) // 2
-        posY = (SCREEN_HEIGHT - GAME_redimensionado.get_height()) // 2
+    def fade_out(self):
+        while self.fade_alpha < 255:
+            self.fade_alpha += self.fade_increment
+            self.game_over_draw()
+            pygame.display.update()
+            self.clock.tick(FPS)
+
+
+    def menu(self):
         name = "" # Nombre inicial vacío
+        self.fade_in(name)
+        # Redimensionar la imagen al tamaño de la ventana
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -140,13 +155,28 @@ class Game:
                         self.player.name = name # Guardar el nombre en el objeto player
                         self.state = "playing" # Cambiar de estado a "playing"
                         return
-            self.screen.blit(GAME_redimensionado, (posX, posY))
-            text, text_rect = self.text_utils.get_centered_message(f"NAME: {name}")
-            self.screen.blit(text, text_rect)
-            text, text_rect = self.text_utils.get_centered_message(self.max_name+" "+str(self.max_points),SCREEN_WIDTH/2, 100)
-            if (self.max_points>0):self.screen.blit(text, text_rect)
-            pygame.display.update() # Actualizar la pantalla
+            self.menu_draw(name)
 
+    def menu_draw(self, name):
+        GAME_redimensionado = pygame.transform.scale(GAME, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        posX = (SCREEN_WIDTH - GAME_redimensionado.get_width()) // 2
+        posY = (SCREEN_HEIGHT - GAME_redimensionado.get_height()) // 2
+        self.screen.blit(GAME_redimensionado, (posX, posY))
+        text, text_rect = self.text_utils.get_centered_message(f"NAME: {name}")
+        self.screen.blit(text, text_rect)
+        text, text_rect = self.text_utils.get_centered_message(self.max_name+" "+str(self.max_points),SCREEN_WIDTH/2, 100)
+        if (self.max_points>0):self.screen.blit(text, text_rect)
+        self.fade_surface.fill((0, 0, 0, self.fade_alpha))
+        self.screen.blit(self.fade_surface, (0, 0))
+        pygame.display.update() # Actualizar la pantalla
+
+    def fade_in(self, name):
+        self.fade_alpha = 255
+        while self.fade_alpha > 0:
+            self.fade_alpha -= self.fade_increment
+            self.menu_draw(name)
+            pygame.display.update()
+            self.clock.tick(FPS)
 
     def score(self):
         self.player.points += 1
