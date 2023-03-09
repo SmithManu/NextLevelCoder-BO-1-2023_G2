@@ -25,11 +25,11 @@ class ObstacleManager:
         self.crearPowerUp()
 
     def draw(self, screen):
+        for cloud in self.clouds:
+            cloud.draw(screen)
         self.cactus.draw(screen)
         self.birds.draw(screen)
         self.powerUp.draw(screen)
-        for cloud in self.clouds:
-            cloud.draw(screen)
 
     def crearCactus(self):
         if self.cactus.rect.x < -self.cactus.rect.width:
@@ -38,7 +38,6 @@ class ObstacleManager:
 
     def crearBirds(self):
         if (self.cactus.rect.x <SCREEN_WIDTH //2)and self.birds.dead: #evita sobreponer
-            print("cactus al medio")
             if self.step_index_Birds > 250 : #verifica que no haya pajaros
                 self.birds=Bird (BIRD)
                 self.step_index_Birds=random.randint(0,250)

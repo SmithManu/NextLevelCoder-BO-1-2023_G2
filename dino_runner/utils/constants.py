@@ -84,6 +84,12 @@ COLORS = {
     "WHITE": (255,255,255)
 }
 
+COLORS2 =[
+    (244, 208, 63),
+    (230, 126, 34),
+    (255, 65, 43)
+]
+
 MUSIC_GAME = [
     pygame.mixer.Sound(os.path.join(IMG_DIR, 'Music/Game.mp3')),
     pygame.mixer.Sound(os.path.join(IMG_DIR, 'Music/Game1.mp3')),
