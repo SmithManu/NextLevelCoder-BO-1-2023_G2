@@ -25,13 +25,11 @@ class Dinosaur(Sprite):
         self.is_dead = False
         self.life = 3
         self.name = ""
-        self.power_up_shild=False
-        self.power_up_fire=False
-        self.power_up_Big=False
+        self.power_up=[False, False, False]
         self.fires = []
         self.jump_velocity = self.JUMP_VEL
         self.step_index_Fire = 0
-        self.power_up_time_left = 500
+        self.power_up_time = [500,500,500]
 
         self.otro=self.image.get_width()
         self.otro2=self.image.get_height()
@@ -57,7 +55,7 @@ class Dinosaur(Sprite):
         self.step_index += 1
         if self.step_index >= 10:
             self.step_index = 0
-        if user_input[pygame.K_a] and self.power_up_fire and self.step_index_Fire>10:
+        if user_input[pygame.K_a] and self.power_up[1] and self.step_index_Fire>10:
             self.shoot()
             self.step_index_Fire=0
         self.step_index_Fire+=1
@@ -66,7 +64,7 @@ class Dinosaur(Sprite):
         for number in range(self.life):
             screen.blit(HEART, ( 50+30*number, SCREEN_HEIGHT-60))
         
-        if(self.power_up_Big):
+        if(self.power_up[2]):
             if(self.otro<280):
                 self.otro+=2
                 self.otro2+=2
@@ -76,23 +74,25 @@ class Dinosaur(Sprite):
         else:
             screen.blit(self.image, self.dino_rect)
             
-        if(not self.power_up_Big):
-            if(self.power_up_shild):
-                sild = pygame.transform.scale(SHIELD, (140, 140))
-                screen.blit(sild, (self.dino_rect.x-30, self.dino_rect.y-30))
-            if(len(self.fires)!=0):
-                for fire in self.fires:
-                    fire.draw(screen)
+        if(self.power_up[0]):
+            sild = pygame.transform.scale(SHIELD, (140, 140))
+            screen.blit(sild, (self.dino_rect.x-30, self.dino_rect.y-30))
+        if(len(self.fires)!=0):
+            for fire in self.fires:
+                fire.draw(screen)
+        if self.power_up[0]:
+            self.draw_barra(0, screen)
+        if self.power_up[1]:
+            self.draw_barra(1, screen)
+        if self.power_up[2]:
+            self.draw_barra(2, screen)
         
-        if self.power_up_shild or self.power_up_fire:
-            power_up_color = (0, 0, 0) # o cualquier otro color que desees
-            power_up_width = self.power_up_time_left 
-            power_up_x = SCREEN_WIDTH - power_up_width-20
-            power_up_y = SCREEN_HEIGHT - 20 # o cualquier otra posición vertical que desees
-            self.draw_power_up_timer(screen, power_up_color, power_up_x, power_up_y, power_up_width)
-
-            
-
+    def draw_barra(self, index, screen):
+        power_up_color = (0, 0, 0) # o cualquier otro color que desees
+        power_up_width = self.power_up_time[index] 
+        power_up_x = SCREEN_WIDTH - power_up_width-20
+        power_up_y = SCREEN_HEIGHT - 20*(index+2) # o cualquier otra posición vertical que desees
+        self.draw_power_up_timer(screen, power_up_color, power_up_x, power_up_y, power_up_width)
 
     def run(self):
         self.image = RUNNING[0] if self.step_index < 5 else RUNNING[1]
@@ -135,9 +135,9 @@ class Dinosaur(Sprite):
         if self.dino_rect.colliderect(object.rect):
             if isinstance(object, Obstacle) and not object.dead:
                 object.dead=True
-                if not self.power_up_Big and not self.power_up_shild:
+                if not self.power_up[2] and not self.power_up[0]:
                     self.life-=1
-            elif  isinstance(object, PowerUp) :
+            elif  isinstance(object, PowerUp) and not self.power_up[2]:
                 object.darPowerUp(self)
     
     def check_colicion_fires(self, obstacle):
@@ -151,12 +151,19 @@ class Dinosaur(Sprite):
         pygame.draw.rect(screen, color, (x, y, width, 20))
 
     def temporizadorAtributo(self):
-        if(self.power_up_time_left<0 and (self.power_up_shild or self.power_up_fire or self.power_up_Big)):
-            self.power_up_shild=False
-            self.power_up_fire=False
-            self.power_up_Big=False
-            self.power_up_time_left=500
-            
+        if(self.power_up[0]):
+            self.control(0)
+        if(self.power_up[1]):
+            self.control(1)
+        if(self.power_up[2]):
+            self.control(2)
+        else:
             self.otro=self.image.get_width()
             self.otro2=self.image.get_height()
-        self.power_up_time_left-=1
+        
+    def control(self, index):
+        self.power_up_time[index]-=1
+        if(self.power_up_time[index]<0):
+            self.power_up_time[index]=500
+            self.power_up[index]=False
+        

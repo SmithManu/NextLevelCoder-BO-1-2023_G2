@@ -61,6 +61,8 @@ class Game:
         if self.player.is_dead:
             if self.player.points>self.max_points:
                 self.max_points=self.player.points
+            self.day_num = 255
+            self.dey = "morning"
             self.state = "game_over"
         
     def draw(self):

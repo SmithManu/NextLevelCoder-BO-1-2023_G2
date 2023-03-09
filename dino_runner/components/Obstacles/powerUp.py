@@ -26,13 +26,13 @@ class PowerUp(Sprite):
             player.life+=1
         elif(self.type==1):
             player.durationPowerUp=0
-            player.power_up_shild =True
+            player.power_up[0] =True
         elif(self.type==2):
             player.durationPowerUp_Fire=0
-            player.power_up_fire =True
+            player.power_up[1] =True
         elif(self.type==3):
             player.durationPowerUp_Big=0
-            player.power_up_Big =True
+            player.power_up[2] =True
             
 
     
